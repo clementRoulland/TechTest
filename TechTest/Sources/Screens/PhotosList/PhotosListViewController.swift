@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  PhotosListViewController.swift
 //  TechTest
 //
 //  Created by Clément on 2022-03-01.
@@ -7,7 +7,8 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+class PhotosListViewController: UIViewController {
+  let service: PhotosService = ConcretePhotosService()
 
   lazy var helloWorldLabel: UILabel = {
     var label = UILabel()
@@ -30,6 +31,8 @@ class ViewController: UIViewController {
       helloWorldLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
       helloWorldLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
     ])
+
+    
   }
 }
 
