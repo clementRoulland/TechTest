@@ -21,6 +21,7 @@ class PhotosListCell: UITableViewCell {
 
   lazy var label: UILabel = {
     var label = UILabel()
+    label.numberOfLines = 0
     label.translatesAutoresizingMaskIntoConstraints = false
     label.font = .systemFont(ofSize: 14)
     return label
@@ -41,7 +42,7 @@ class PhotosListCell: UITableViewCell {
     contentView.addSubview(label)
     NSLayoutConstraint.activate([
       label.leadingAnchor.constraint(equalTo: image.trailingAnchor, constant: .globalMargin),
-      label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: .globalMargin),
+      label.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -.globalMargin),
       label.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
       label.topAnchor.constraint(greaterThanOrEqualTo: contentView.topAnchor, constant: .globalMargin),
     ])
