@@ -9,11 +9,30 @@ import UIKit
 
 class ViewController: UIViewController {
 
+  lazy var helloWorldLabel: UILabel = {
+    var label = UILabel()
+    label.translatesAutoresizingMaskIntoConstraints = false
+    label.font = .systemFont(ofSize: 14)
+    label.textColor = .label
+    label.numberOfLines = 0
+    label.text = "Hello World".localized
+    return label
+  }()
+
   override func viewDidLoad() {
     super.viewDidLoad()
-    // Do any additional setup after loading the view.
+
+    view.backgroundColor = .systemBackground
+
+    view.addSubview(helloWorldLabel)
+    NSLayoutConstraint.activate([
+      helloWorldLabel.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: .horizontalMargin),
+      helloWorldLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+      helloWorldLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+    ])
   }
-
-
 }
 
+private extension CGFloat {
+  static let horizontalMargin: CGFloat = 24
+}
