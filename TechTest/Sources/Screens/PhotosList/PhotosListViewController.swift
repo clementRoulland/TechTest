@@ -7,33 +7,67 @@
 
 import UIKit
 
-class PhotosListViewController: UIViewController {
-  let service: PhotosService = ConcretePhotosService()
+class PhotosListViewController: UITableViewController {
+  private typealias DataSource = UITableViewDiffableDataSource<Section, Photo>
+  private typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Photo>
 
-  lazy var helloWorldLabel: UILabel = {
-    var label = UILabel()
-    label.translatesAutoresizingMaskIntoConstraints = false
-    label.font = .systemFont(ofSize: 14)
-    label.textColor = .label
-    label.numberOfLines = 0
-    label.text = "Hello World".localized
-    return label
-  }()
+  private var dataSource: DataSource!
+
+  let service: PhotosService = ConcretePhotosService()
 
   override func viewDidLoad() {
     super.viewDidLoad()
 
     view.backgroundColor = .systemBackground
 
-    view.addSubview(helloWorldLabel)
-    NSLayoutConstraint.activate([
-      helloWorldLabel.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: .horizontalMargin),
-      helloWorldLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-      helloWorldLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-    ])
+    title = "Photos".localized
+    navigationItem.largeTitleDisplayMode = .automatic
 
-    
+    dataSource = DataSource(tableView: tableView, cellProvider: cellProvider)
+    tableView.register(PhotosListCell.self, forCellReuseIdentifier: PhotosListCell.reuseIdentifier)
+
+    tableView.allowsSelection = false
+
+    guard let photos = try? service.getPhotos() else { return displayError() }
+    reloadData(with: photos)
   }
+}
+
+// MARK: - Table view data source
+private extension PhotosListViewController {
+  func cellProvider(tableView: UITableView, indexPath: IndexPath, viewModel: Photo) -> UITableViewCell? {
+    guard let cell = tableView.dequeueReusableCell(
+      withIdentifier: PhotosListCell.reuseIdentifier,
+      for: indexPath
+    ) as? PhotosListCell else {
+      return nil
+    }
+
+    cell.configure(with: viewModel)
+    return cell
+  }
+
+  func reloadData(with viewModel: [Photo]) {
+    var snapshot = Snapshot()
+    snapshot.appendSections([Section.main])
+    snapshot.appendItems(viewModel, toSection: .main)
+    dataSource.apply(snapshot, animatingDifferences: false)
+  }
+}
+
+private extension PhotosListViewController {
+  func displayError() {
+    let alert = UIAlertController(
+      title: "An error occured".localized,
+      message: "Unable to load photos from PhotosService".localized,
+      preferredStyle: .actionSheet
+    )
+    present(alert, animated: true)
+  }
+}
+
+private enum Section: Hashable {
+  case main
 }
 
 private extension CGFloat {
